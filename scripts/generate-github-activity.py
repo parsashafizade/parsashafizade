@@ -36,8 +36,8 @@ from typing import Any
 USER = "parsashafizade"
 API = "https://api.github.com"
 
-ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "Premium" / "assets" / "activity"
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "assets" / "activity"
 
 # Rolling public-activity window.
 DAYS = 84
@@ -96,6 +96,121 @@ def get(path: str, auth: str, **params: Any) -> Any:
         ) from exc
 
 
+
+def graphql(
+    query: str,
+    auth: str,
+) -> dict[str, Any]:
+    url = "https://api.github.com/graphql"
+
+    headers = {
+        "Authorization": f"Bearer {auth}",
+        "Content-Type": "application/json",
+        "User-Agent": "parsashafizade-premium-activity",
+    }
+
+    payload = json.dumps({
+        "query": query,
+    }).encode("utf-8")
+
+    request = urllib.request.Request(
+        url,
+        data=payload,
+        headers=headers,
+    )
+
+    try:
+        with urllib.request.urlopen(
+            request,
+            timeout=30,
+        ) as response:
+            result = json.loads(
+                response.read().decode("utf-8")
+            )
+
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode(
+            "utf-8",
+            errors="replace",
+        )
+        raise RuntimeError(
+            f"GitHub GraphQL API {exc.code}: {body}"
+        ) from exc
+
+    if "errors" in result:
+        raise RuntimeError(
+            f"GitHub GraphQL errors: {result['errors']}"
+        )
+
+    return result["data"]
+
+
+
+def fetch_contribution_calendar(
+    auth: str,
+) -> dict[str, Any]:
+    query = """
+    query {
+      viewer {
+        contributionsCollection {
+          contributionCalendar {
+            totalContributions
+            weeks {
+              contributionDays {
+                date
+                contributionCount
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+
+    data = graphql(
+        query,
+        auth,
+    )
+
+    calendar = (
+        data["viewer"]
+        ["contributionsCollection"]
+        ["contributionCalendar"]
+    )
+
+    daily_signal: defaultdict[date, int] = defaultdict(int)
+
+    for week in calendar["weeks"]:
+        for day in week["contributionDays"]:
+            try:
+                day_date = date.fromisoformat(
+                    day["date"]
+                )
+
+                count = int(
+                    day.get(
+                        "contributionCount",
+                        0,
+                    )
+                )
+
+                if count:
+                    daily_signal[day_date] = count
+
+            except (
+                ValueError,
+                TypeError,
+            ):
+                continue
+
+    return {
+        "total": int(
+            calendar["totalContributions"]
+        ),
+        "daily_signal": dict(daily_signal),
+    }
+
+
 def pages(
     path: str,
     auth: str,
@@ -147,15 +262,18 @@ def escape(value: Any) -> str:
 # Data collection
 # ---------------------------------------------------------------------------
 
+
+
 def fetch_data(auth: str) -> dict[str, Any]:
     user = get(f"/users/{USER}", auth)
 
-    # Intentionally use the public user-repository endpoint.
-    # Even PROFILE_REPOS_TOKEN cannot cause private repo data to leak.
+    # Authenticated repository access:
+    # includes both public and private repositories.
     repos = pages(
-        f"/users/{USER}/repos",
+        "/user/repos",
         auth,
-        type="owner",
+        visibility="all",
+        affiliation="owner",
         sort="pushed",
         direction="desc",
     )
@@ -164,11 +282,8 @@ def fetch_data(auth: str) -> dict[str, Any]:
         repo
         for repo in repos
         if repo.get("owner", {}).get("login", "").lower() == USER
-        and not repo.get("private")
     ]
 
-    # Forks and archived repositories should not inflate personal portfolio
-    # stars, forks, or language footprint.
     portfolio = [
         repo
         for repo in repos
@@ -176,7 +291,6 @@ def fetch_data(auth: str) -> dict[str, Any]:
         and not repo.get("archived")
     ]
 
-    # Aggregate real GitHub language byte counts.
     languages: Counter[str] = Counter()
 
     for repo in portfolio:
@@ -202,9 +316,8 @@ def fetch_data(auth: str) -> dict[str, Any]:
             except (TypeError, ValueError):
                 continue
 
-    language_mode = "byte-weighted public code"
+    language_mode = "byte-weighted full repository code"
 
-    # Honest fallback if the language-byte endpoints are unavailable.
     if not languages:
         language_mode = "primary-language fallback"
 
@@ -212,66 +325,25 @@ def fetch_data(auth: str) -> dict[str, Any]:
             if repo.get("language"):
                 languages[str(repo["language"])] += 1
 
-    # Explicitly public events only.
-    # This prevents a powerful token from leaking private contribution data.
-    events = pages(
-        f"/users/{USER}/events/public",
-        auth,
-        max_pages=3,
-    )
 
     now = datetime.now(timezone.utc)
-    today = now.date()
-    start = today - timedelta(days=DAYS - 1)
 
-    daily_signal: defaultdict[date, int] = defaultdict(int)
-    daily_events: defaultdict[date, int] = defaultdict(int)
+    contribution = fetch_contribution_calendar(
+        auth
+    )
 
-    meaningful_event_types = {
-        "PullRequestEvent",
-        "PullRequestReviewEvent",
-        "PullRequestReviewCommentEvent",
-        "IssuesEvent",
-        "IssueCommentEvent",
-        "CreateEvent",
-        "ReleaseEvent",
-        "CommitCommentEvent",
-    }
+    daily_signal: defaultdict[date, int] = defaultdict(
+        int,
+        contribution["daily_signal"],
+    )
 
-    for event in events:
-        created = parse_datetime(event.get("created_at"))
-
-        if not created:
-            continue
-
-        event_day = created.astimezone(timezone.utc).date()
-
-        if not start <= event_day <= today:
-            continue
-
-        event_type = event.get("type")
-        strength = 0
-
-        if event_type == "PushEvent":
-            # GitHub exposes the push size in the public event payload.
-            # This is used only as a visualization intensity signal.
-            try:
-                strength = max(
-                    1,
-                    int(
-                        (event.get("payload") or {})
-                        .get("size", 1)
-                    ),
-                )
-            except (TypeError, ValueError):
-                strength = 1
-
-        elif event_type in meaningful_event_types:
-            strength = 1
-
-        if strength:
-            daily_signal[event_day] += strength
-            daily_events[event_day] += 1
+    daily_events: defaultdict[date, int] = defaultdict(
+        int,
+        {
+            day: 1
+            for day in contribution["daily_signal"]
+        },
+    )
 
     return {
         "user": user,
@@ -422,6 +494,16 @@ def render_stats(data: dict[str, Any]) -> str:
     repos = data["repos"]
     portfolio = data["portfolio"]
 
+    public_repos = sum(
+        1 for repo in repos
+        if not repo.get("private")
+    )
+
+    private_repos = sum(
+        1 for repo in repos
+        if repo.get("private")
+    )
+
     stars = sum(
         int(repo.get("stargazers_count") or 0)
         for repo in portfolio
@@ -459,7 +541,7 @@ def render_stats(data: dict[str, Any]) -> str:
 
     return f"""<svg width="430" height="180" viewBox="0 0 430 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
 <title id="title">Parsa Shafizade GitHub Snapshot</title>
-<desc id="desc">Local public GitHub summary: {len(repos)} repositories, {stars} stars, {forks} forks, and {recent} repositories pushed in the last 30 days.</desc>
+<desc id="desc">Local public GitHub summary: {len(repos)} repositories ({public_repos} public, {private_repos} private), {stars} stars, {forks} forks, and {recent} repositories pushed in the last 30 days.</desc>
 
 {compact_defs("stats", "#38BDF8")}
 {COMPACT_STYLE}
@@ -475,14 +557,14 @@ def render_stats(data: dict[str, Any]) -> str:
 
 <g class="sans reveal">
   <circle cx="407" cy="23" r="3.2" fill="#22D3EE" class="pulse"/>
-  <text x="396" y="26.5" text-anchor="end" fill="#64748B" font-size="8.2" font-weight="700" letter-spacing="1.2">GITHUB SNAPSHOT · PUBLIC SIGNAL</text>
+  <text x="396" y="26.5" text-anchor="end" fill="#64748B" font-size="8.2" font-weight="700" letter-spacing="1.2">GITHUB SNAPSHOT · ALL REPOSITORIES</text>
   <text x="20" y="56" fill="#F8FAFC" font-size="17" font-weight="760">GitHub Signal</text>
   <text x="20" y="74" fill="#94A3B8" font-size="9.5">Current public repository activity, generated locally.</text>
 </g>
 
 <g class="sans reveal d2">
   <text x="20" y="111" fill="#F8FAFC" font-size="23" font-weight="800">{len(repos)}</text>
-  <text x="20" y="125" fill="#64748B" font-size="7.6" font-weight="700">PUBLIC REPOS</text>
+  <text x="20" y="125" fill="#64748B" font-size="7.6" font-weight="700">TOTAL REPOS</text>
 
   <line x1="99" y1="94" x2="99" y2="130" stroke="#243247"/>
 
@@ -577,7 +659,7 @@ def render_languages(data: dict[str, Any]) -> str:
 
     return f"""<svg width="430" height="180" viewBox="0 0 430 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
 <title id="title">Parsa Shafizade Language Mix</title>
-<desc id="desc">Top public repository languages using {escape(data["language_mode"])}.</desc>
+<desc id="desc">Top repository languages using {escape(data["language_mode"])}.</desc>
 
 {compact_defs("lang", "#22D3EE")}
 {COMPACT_STYLE}
@@ -593,7 +675,7 @@ def render_languages(data: dict[str, Any]) -> str:
 
 <g class="sans reveal">
   <circle cx="23" cy="23" r="3.2" fill="#38BDF8" class="pulse"/>
-  <text x="396" y="26.5" text-anchor="end" fill="#64748B" font-size="8.2" font-weight="700" letter-spacing="1.2">LANGUAGE MIX · PUBLIC REPOSITORIES</text>
+  <text x="396" y="26.5" text-anchor="end" fill="#64748B" font-size="8.2" font-weight="700" letter-spacing="1.2">LANGUAGE MIX · ALL REPOSITORIES</text>
   <text x="20" y="43" fill="#F8FAFC" font-size="15.5" font-weight="760">Development Stack</text>
 </g>
 
@@ -721,7 +803,7 @@ def render_contributions(data: dict[str, Any]) -> str:
     )
 
     return f"""<svg width="100%" viewBox="0 0 900 230" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-<title id="title">Parsa Shafizade Public GitHub Activity</title>
+<title id="title">Parsa Shafizade GitHub Contribution Activity</title>
 <desc id="desc">Twelve-week local public GitHub activity view with {active} active days and {events} meaningful public events.</desc>
 
 <defs>
@@ -824,7 +906,7 @@ def render_contributions(data: dict[str, Any]) -> str:
   <circle cx="38" cy="33" r="3.2" fill="#22D3EE" class="pulse"/>
 
   <text x="50" y="36" fill="#64748B" font-size="8.4" font-weight="700" letter-spacing="1.35">
-    PUBLIC ACTIVITY · LAST 12 WEEKS
+    GITHUB CONTRIBUTION ACTIVITY · LAST 12 WEEKS
   </text>
 
   <text x="38" y="72" fill="#F8FAFC" font-size="21" font-weight="780">
@@ -832,7 +914,7 @@ def render_contributions(data: dict[str, Any]) -> str:
   </text>
 
   <text x="38" y="92" fill="#94A3B8" font-size="10.5">
-    Recent public engineering activity, generated locally.
+    Recent contribution activity, generated from GitHub GraphQL.
   </text>
 </g>
 
@@ -841,7 +923,7 @@ def render_contributions(data: dict[str, Any]) -> str:
   <text x="38" y="142" fill="#64748B" font-size="7.5" font-weight="700">ACTIVE DAYS</text>
 
   <text x="104" y="128" fill="#E2E8F0" font-size="20" font-weight="760">{events}</text>
-  <text x="104" y="142" fill="#64748B" font-size="7.5" font-weight="700">PUBLIC EVENTS</text>
+  <text x="104" y="142" fill="#64748B" font-size="7.5" font-weight="700">CONTRIBUTIONS</text>
 
   <text x="176" y="128" fill="#E2E8F0" font-size="20" font-weight="760">{peak}</text>
   <text x="176" y="142" fill="#64748B" font-size="7.5" font-weight="700">PEAK SIGNAL</text>
@@ -851,7 +933,7 @@ def render_contributions(data: dict[str, Any]) -> str:
   <rect x="226" y="50" width="632" height="149" rx="16" fill="#0A1422" fill-opacity=".62" stroke="#1E293B"/>
 
   <text class="mono" x="244" y="62" fill="#475569" font-size="7.2" letter-spacing="1.05">
-    PUBLIC EVENT INTENSITY
+    CONTRIBUTION INTENSITY
   </text>
 
   {"".join(cells)}
@@ -882,7 +964,7 @@ def render_contributions(data: dict[str, Any]) -> str:
 
 <g class="mono reveal d3">
   <text x="38" y="221" fill="#475569" font-size="6.8">
-    SOURCE: GITHUB PUBLIC EVENTS · PRIVATE ACTIVITY EXCLUDED
+    SOURCE: GITHUB CONTRIBUTION GRAPH
   </text>
 
   <text x="862" y="221" text-anchor="end" fill="#64748B" font-size="6.8">

@@ -914,7 +914,7 @@ def render_contributions(data: dict[str, Any]) -> str:
   </text>
 
   <text x="38" y="92" fill="#94A3B8" font-size="10.5">
-    Recent contribution activity,
+    Recent contribution activity.
   </text>
 </g>
 

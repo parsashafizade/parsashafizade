@@ -1,10 +1,3 @@
-<div align="center">
-
-<img src="./assets/github-snapshot.svg" width="100%" alt="GitHub Activity Snapshot" />
-
-</div>
-
-<br/>
 
 <div align="center">
 
@@ -12,15 +5,6 @@
 
 </div>
 
-<br/>
-
-<div align="center">
-
-### Mobile Application Developer · Product-minded Builder
-
-Building practical digital products with **Flutter**, **product thinking**, and **AI-assisted development**.
-
-</div>
 
 <br/>
 
@@ -153,102 +137,9 @@ Recent projects that reflect what I’m currently building, exploring, and impro
 
 <br/>
 
-### AI & Technology Interests
-
-<table>
-<tr>
-
-<td width="33%" valign="top">
-
-<strong>AI Systems</strong>
-
-<br/><br/>
-
-AI Agents  
-Generative AI
-
-</td>
-
-<td width="33%" valign="top">
-
-<strong>Development</strong>
-
-<br/><br/>
-
-AI-assisted Development  
-Automation Workflows
-
-</td>
-
-<td width="33%" valign="top">
-
-<strong>Product</strong>
-
-<br/><br/>
-
-AI in Product Development  
-Product Thinking
-
-</td>
-
-</tr>
-</table>
-
-<br/>
-
 <div align="center">
 <img width="50%" src="./assets/section-divider.svg" alt="" />
 </div>
-
-<br/>
-
-## How I approach building products
-
-<table>
-<tr>
-
-<td width="25%" valign="top">
-
-<strong>01 · Understand</strong>
-
-<br/><br/>
-
-Understand the problem, user need, and constraints before choosing the solution.
-
-</td>
-
-<td width="25%" valign="top">
-
-<strong>02 · Decide</strong>
-
-<br/><br/>
-
-Turn product requirements into deliberate technical and product decisions.
-
-</td>
-
-<td width="25%" valign="top">
-
-<strong>03 · Build</strong>
-
-<br/><br/>
-
-Translate those decisions into practical, maintainable working software.
-
-</td>
-
-<td width="25%" valign="top">
-
-<strong>04 · Improve</strong>
-
-<br/><br/>
-
-Test, learn, iterate, and make both the product and engineering stronger.
-
-</td>
-
-</tr>
-</table>
 
 <br/>
 

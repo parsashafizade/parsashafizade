@@ -145,23 +145,33 @@ Recent projects that reflect what I’m currently building, exploring, and impro
 
 <div align="center">
 
-<span>
+<table>
+<tr>
+<td align="center">
+
 <a href="https://www.linkedin.com/in/parsa-shafizade/">
-<img src="./assets/social/linkedin.svg" width="28" alt="LinkedIn" />
+<img src="./assets/social/linkedin.svg" width="32" alt="LinkedIn" />
 </a>
-&nbsp;
+
+<br/>
+
 LinkedIn
-</span>
 
-&nbsp;&nbsp;&nbsp;&nbsp;
+</td>
 
-<span>
+<td align="center">
+
 <a href="https://github.com/parsashafizade">
-<img src="./assets/social/github.svg" width="28" alt="GitHub" />
+<img src="./assets/social/github.svg" width="32" alt="GitHub" />
 </a>
-&nbsp;
+
+<br/>
+
 GitHub
-</span>
+
+</td>
+</tr>
+</table>
 
 </div>
 

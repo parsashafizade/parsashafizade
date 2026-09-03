@@ -8,11 +8,6 @@
 
 <br/>
 
-<div align="center">
-<img width="50%" src="./assets/section-divider.svg" alt="" />
-</div>
-
-<br/>
 
 ## About
 
@@ -22,11 +17,6 @@ I’m interested in the full path from understanding a problem to designing, bui
 
 <br/>
 
-<div align="center">
-<img width="50%" src="./assets/section-divider.svg" alt="" />
-</div>
-
-<br/>
 
 ## What I'm focused on
 
@@ -45,11 +35,6 @@ I’m interested in the full path from understanding a problem to designing, bui
 
 <br/>
 
-<div align="center">
-<img width="50%" src="./assets/section-divider.svg" alt="" />
-</div>
-
-<br/>
 
 ## Future Project
 
@@ -61,11 +46,6 @@ I’m interested in the full path from understanding a problem to designing, bui
 
 <br/>
 
-<div align="center">
-<img width="50%" src="./assets/section-divider.svg" alt="" />
-</div>
-
-<br/>
 
 ## Selected Work
 
@@ -95,11 +75,6 @@ Recent projects that reflect what I’m currently building, exploring, and impro
 
 <br/>
 
-<div align="center">
-<img width="50%" src="./assets/section-divider.svg" alt="" />
-</div>
-
-<br/>
 
 ## Tech Stack
 
@@ -137,11 +112,6 @@ Recent projects that reflect what I’m currently building, exploring, and impro
 
 <br/>
 
-<div align="center">
-<img width="50%" src="./assets/section-divider.svg" alt="" />
-</div>
-
-<br/>
 
 <div align="center">
 <img width="50%" src="./assets/section-divider.svg" alt="" />
@@ -171,42 +141,18 @@ Recent projects that reflect what I’m currently building, exploring, and impro
 
 <br/>
 
-## Background
-
-<div align="center">
-
-Computer Engineering student at **Bu-Ali Sina University**
-
-<br/><br/>
-
-**Software Engineering** · **Artificial Intelligence** · **Computer Networks** · **Databases** · **Algorithms & Data Structures**
-
-</div>
-
-<br/>
-
-I’m working toward becoming a stronger **Mobile / Software Engineer** who understands both the engineering system and the product it exists to serve.
-
-<br/>
-
-<div align="center">
-<img width="50%" src="./assets/section-divider.svg" alt="" />
-</div>
-
-<br/>
-
 ## Connect
 
 <div align="center">
 
 <a href="https://www.linkedin.com/in/parsa-shafizade/">
-<img src="https://img.shields.io/badge/Connect%20on%20LinkedIn-38BDF8?style=for-the-badge&logo=linkedin&logoColor=0B1120" />
+<img src="https://img.shields.io/badge/LinkedIn-38BDF8?style=for-the-badge&logo=linkedin&logoColor=0B1120" />
 </a>
 
-&nbsp;
+&nbsp;&nbsp;
 
 <a href="https://github.com/parsashafizade">
-<img src="https://img.shields.io/badge/Explore%20my%20GitHub-111827?style=for-the-badge&logo=github&logoColor=F8FAFC" />
+<img src="https://img.shields.io/badge/GitHub-111827?style=for-the-badge&logo=github&logoColor=F8FAFC" />
 </a>
 
 </div>

@@ -145,26 +145,28 @@ Recent projects that reflect what I’m currently building, exploring, and impro
 
 <div align="center">
 
-<table>
-<tr>
-<td>
-
 <a href="https://www.linkedin.com/in/parsa-shafizade/">
-<img src="https://img.shields.io/badge/LinkedIn-38BDF8?style=for-the-badge&logo=linkedin&logoColor=0B1120" />
+<img src="./assets/social/linkedin.svg" width="28" alt="LinkedIn" />
 </a>
 
-</td>
+&nbsp; LinkedIn
 
-<td>
+&nbsp;&nbsp;&nbsp;&nbsp;
 
 <a href="https://github.com/parsashafizade">
-<img src="https://img.shields.io/badge/GitHub-111827?style=for-the-badge&logo=github&logoColor=F8FAFC" />
+<img src="./assets/social/github.svg" width="28" alt="GitHub" />
 </a>
 
-</td>
-</tr>
-</table>
+&nbsp; GitHub
 
 </div>
 
 <br/>
+
+<div align="center">
+
+<sub>
+Building, learning, and improving one product at a time.
+</sub>
+
+</div>

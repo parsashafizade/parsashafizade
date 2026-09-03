@@ -1,0 +1,99 @@
+# This file is stored inside the Minimal starter-kit style.
+#
+# GitHub only executes workflows from the repository-root
+# .github/workflows directory.
+#
+# When using the Minimal style as an actual profile repository,
+# place this workflow at:
+#
+# .github/workflows/update-github-snapshot.yml
+
+name: Update GitHub Activity
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "17 3 * * *"
+
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/generate-github-snapshot.py"
+      - "Minimal/scripts/generate-github-snapshot.py"
+      - ".github/workflows/update-github-snapshot.yml"
+      - "Minimal/.github/workflows/update-github-snapshot.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: github-activity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Generate GitHub activity card
+        id: generate
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [[ -f "scripts/generate-github-snapshot.py" ]]; then
+            SCRIPT_PATH="scripts/generate-github-snapshot.py"
+            SVG_PATH="assets/github-snapshot.svg"
+          elif [[ -f "Minimal/scripts/generate-github-snapshot.py" ]]; then
+            SCRIPT_PATH="Minimal/scripts/generate-github-snapshot.py"
+            SVG_PATH="Minimal/assets/github-snapshot.svg"
+          else
+            echo "Generator script not found." >&2
+            exit 1
+          fi
+
+          python "$SCRIPT_PATH"
+
+          if [[ ! -f "$SVG_PATH" ]]; then
+            echo "Expected SVG was not generated: $SVG_PATH" >&2
+            exit 1
+          fi
+
+          echo "svg_path=$SVG_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Commit updated card
+        shell: bash
+        env:
+          SVG_PATH: ${{ steps.generate.outputs.svg_path }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add "$SVG_PATH"
+
+          if git diff --cached --quiet; then
+            echo "GitHub activity card is already up to date."
+            exit 0
+          fi
+
+          git commit -m "chore: update GitHub activity"
+          git pull --rebase
+          git push
+

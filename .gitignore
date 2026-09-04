@@ -1,0 +1,22 @@
+
+# macOS
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local test scripts
+scripts/*backup.py
+scripts/test*.py
+
+# macOS
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local test scripts
+scripts/*backup.py
+scripts/test*.py

@@ -123,13 +123,13 @@ Recent projects that reflect what I’m currently building, exploring, and impro
 
 <div align="center">
 
-<img width="49%" src="./assets/activity/stats.svg" alt="GitHub statistics" />
+<img width="49%" src="./assets/activity/stats.svg?v=1" alt="GitHub statistics" />
 
-<img width="49%" src="./assets/activity/languages.svg" alt="Languages" />
+<img width="49%" src="./assets/activity/languages.svg?v=1" alt="Languages" />
 
 <br/>
 
-<img width="100%" src="./assets/activity/contributions.svg" alt="Contributions" />
+<img width="100%" src="./assets/activity/contributions.svg?v=1" alt="Contributions" />
 
 </div>
 

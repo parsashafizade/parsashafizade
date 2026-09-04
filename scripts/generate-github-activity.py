@@ -533,11 +533,7 @@ def render_stats(data: dict[str, Any]) -> str:
         else "NO DATA"
     )
 
-    updated = (
-        data["now"]
-        .strftime("UPDATED %b %d, %Y · UTC")
-        .upper()
-    )
+    
 
     return f"""<svg width="430" height="180" viewBox="0 0 430 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
 <title id="title">Parsa Shafizade GitHub Snapshot</title>
@@ -597,8 +593,8 @@ def render_stats(data: dict[str, Any]) -> str:
 <line x1="20" y1="144" x2="410" y2="144" stroke="#1E293B"/>
 
 <g class="mono reveal d3">
-  <text x="20" y="163" fill="#475569" font-size="7.4">{escape(updated)}</text>
-  <text x="320" y="163" fill="#7DD3FC" font-size="7.6" font-weight="700">LOCAL · AUTO-SYNCED</text>
+  
+  
 </g>
 </svg>"""
 
@@ -796,11 +792,7 @@ def render_contributions(data: dict[str, Any]) -> str:
         default=0,
     )
 
-    updated = (
-        data["now"]
-        .strftime("UPDATED %b %d, %Y · UTC")
-        .upper()
-    )
+    
 
     return f"""<svg width="100%" viewBox="0 0 900 230" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
 <title id="title">Parsa Shafizade GitHub Contribution Activity</title>
@@ -964,11 +956,10 @@ def render_contributions(data: dict[str, Any]) -> str:
 
 <g class="mono reveal d3">
   <text x="38" y="221" fill="#475569" font-size="6.8">
-    SOURCE: GITHUB CONTRIBUTION GRAPH
+    
   </text>
 
   <text x="862" y="221" text-anchor="end" fill="#64748B" font-size="6.8">
-    {escape(updated)}
   </text>
 </g>
 </svg>"""

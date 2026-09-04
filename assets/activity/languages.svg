@@ -155,7 +155,7 @@
   <text class="mono" x="397" y="118" text-anchor="end" fill="#64748B" font-size="7.6">5.0%</text>
 
   <rect x="126" y="111" width="194" height="6" rx="3" fill="#111C2D"/>
-  <rect x="126" y="111" width="9.7" height="6" rx="3" fill="#60A5FA" fill-opacity=".72"/>
+  <rect x="126" y="111" width="9.8" height="6" rx="3" fill="#60A5FA" fill-opacity=".72"/>
 
   <circle cx="334" cy="114" r="2.4" fill="#60A5FA" class="pulse"/>
 </g>

@@ -32,13 +32,30 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.13"
 
       - name: Generate activity SVGs
         env:
           PROFILE_REPOS_TOKEN: ${{ secrets.PROFILE_REPOS_TOKEN }}
         run: |
           python scripts/generate-github-activity.py
+
+      - name: Validate generated SVGs
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          files = [
+              "assets/activity/stats.svg",
+              "assets/activity/languages.svg",
+              "assets/activity/contributions.svg",
+          ]
+
+          for file in files:
+              ET.parse(file)
+
+          print("SVG validation OK")
+          PY
 
       - name: Commit updated SVGs
         run: |

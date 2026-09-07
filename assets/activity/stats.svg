@@ -141,7 +141,7 @@
     <rect width="89" height="80" rx="12" fill="#0B1626" stroke="#334155"/>
 
     <text class="mono" x="12" y="18" fill="#64748B" font-size="6.8">LAST PUSH</text>
-    <text class="mono" x="12" y="34" fill="#BAE6FD" font-size="10" font-weight="700">SEP 06</text>
+    <text class="mono" x="12" y="34" fill="#BAE6FD" font-size="10" font-weight="700">SEP 07</text>
 
     <path class="trace" d="M12 57H29L37 48L48 61L60 52L77 52" stroke="#38BDF8" stroke-opacity=".68" stroke-width="1.2"/>
 

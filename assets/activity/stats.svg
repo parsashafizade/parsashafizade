@@ -1,6 +1,6 @@
 <svg width="430" height="180" viewBox="0 0 430 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
 <title id="title">Parsa Shafizade GitHub Snapshot</title>
-<desc id="desc">Local public GitHub summary: 13 repositories (8 public, 5 private), 8 stars, 1 forks, and 8 repositories pushed in the last 30 days.</desc>
+<desc id="desc">Local public GitHub summary: 14 repositories (9 public, 5 private), 11 stars, 1 forks, and 9 repositories pushed in the last 30 days.</desc>
 
 
 <defs>
@@ -121,18 +121,18 @@
 </g>
 
 <g class="sans reveal d2">
-  <text x="20" y="111" fill="#F8FAFC" font-size="23" font-weight="800">13</text>
+  <text x="20" y="111" fill="#F8FAFC" font-size="23" font-weight="800">14</text>
   <text x="20" y="125" fill="#64748B" font-size="7.6" font-weight="700">TOTAL REPOS</text>
 
   <line x1="99" y1="94" x2="99" y2="130" stroke="#243247"/>
 
-  <text x="118" y="111" fill="#E2E8F0" font-size="17" font-weight="760">8</text>
+  <text x="118" y="111" fill="#E2E8F0" font-size="17" font-weight="760">11</text>
   <text x="118" y="125" fill="#64748B" font-size="7.4" font-weight="700">STARS</text>
 
   <text x="180" y="111" fill="#E2E8F0" font-size="17" font-weight="760">1</text>
   <text x="180" y="125" fill="#64748B" font-size="7.4" font-weight="700">FORKS</text>
 
-  <text x="242" y="111" fill="#E2E8F0" font-size="17" font-weight="760">8</text>
+  <text x="242" y="111" fill="#E2E8F0" font-size="17" font-weight="760">9</text>
   <text x="242" y="125" fill="#64748B" font-size="7.4" font-weight="700">PUSHED / 30D</text>
 </g>
 

@@ -125,7 +125,7 @@
   <text class="mono" x="397" y="58" text-anchor="end" fill="#64748B" font-size="7.6">36.0%</text>
 
   <rect x="126" y="51" width="194" height="6" rx="3" fill="#111C2D"/>
-  <rect x="126" y="51" width="69.9" height="6" rx="3" fill="#22D3EE" fill-opacity=".72"/>
+  <rect x="126" y="51" width="69.8" height="6" rx="3" fill="#22D3EE" fill-opacity=".72"/>
 
   <circle cx="334" cy="54" r="2.4" fill="#22D3EE" class="pulse"/>
 </g>
